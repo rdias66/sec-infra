@@ -1,0 +1,53 @@
+Ministry of Education
+FEDERAL TECHNOLOGICAL UNIVERSITY OF PARANÁ
+Ponta Grossa Campus
+Course: Audit and Security in Systems – SI35F
+Professor: Rogério Ranthum – 02/2012
+Date: 11/28/2012
+Integrated Project: Implementation of a Linux Server
+Objectives: Install and configure a server with the Linux operating system, which performs the following functions:
+a) Firewall Server: In this item, students must implement and test the following server functionalities:
+a. Routing between two distinct networks;
+b. Blocking by IP, MAC, Ports, and services;
+c. Port redirection;
+d. Service redirection;
+e. Implement a rule for blocking and releasing per student;
+f. Generation of logs and log analysis.
+b) Proxy Server: In this item, students must install and test the following server functionalities:
+a. At least 01 different site blocking technique per student;
+b. Authenticated Proxy;
+c. Generation and analysis of logs.
+c) DHCP Server:
+a. Create a DHCP server for the computers in Laboratory II.
+d) Domain Server:
+a. Create a domain to be used by the students' notebooks, which has the entire access security structure and file writing.
+b. Each student should have a base folder where they can save their files.
+e) LDAP Server:
+a. This service should be installed to authenticate at least 01 application per student.
+f) VPN Server:
+a. This service should be installed between the Linux server and the students' notebooks, providing remote use of an application running on a notebook.
+Ministry of Education
+FEDERAL TECHNOLOGICAL UNIVERSITY OF PARANÁ
+Ponta Grossa Campus
+g) NFS Server:
+a. This service should share files from the Linux server with all students' notebooks, which should have a Linux installation, either in a virtual machine or dual-boot.
+h) Email Server:
+a. This service should send and receive emails only on the internal network.
+i) Web Server:
+a. This service should provide HTTP page service.
+j) Java Application Server:
+a. This server should provide Java services.
+Materials and Methods:
+a) The Linux server will be installed on a computer provided by Prof. Rogério, which will not contain any type of OS, and it will be up to the students to choose the best Linux distribution;
+b) The students will be fully responsible for taking care of this computer;
+c) The class must elect a student responsible for the server, who will be the direct contact with the professor.
+d) If network cables are necessary for server connections, these will be the responsibility of the students.
+e) This server must, in the Audit classes, be the gateway for LAB II computers.
+f) All types of reference materials may be used to complete the tasks described above.
+Team Organization: The organization of work in the classroom will be up to the students. Tasks can be divided into activities or items.
+Evaluation:
+a) At the end of the semester, on a date to be defined, there will be a seminar for the presentation of the work done, as well as the difficulties encountered. This presentation will be individual, meaning students must perform at least one activity related to the general server configurations.
+Ministry of Education
+FEDERAL TECHNOLOGICAL UNIVERSITY OF PARANÁ
+Ponta Grossa Campus
+b) A HOWTO-style report must be written, within academic standards, with a description of all services, including configuration files, one copy delivered in PDF to the professor, and another copy made available on Moodle for the class students.
