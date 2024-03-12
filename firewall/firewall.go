@@ -56,9 +56,11 @@ func isIptablesInstalled() bool {
 
 // installIptables installs iptables.
 func installIptables() error {
-	cmd := exec.Command("apt", "install", "-y", "iptables")
+	fmt.Println("Install SSH func accessed")
+	cmd := exec.Command("apt-get", "install", "-y", "iptables")
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	return nil
@@ -67,6 +69,7 @@ func installIptables() error {
 // installSSH installs and configures SSH within the container.
 func installSSH() error {
 	// Install required packages inside the container
+	fmt.Println("Install SSH func accessed")
 	err := exec.Command("apt-get", "update").Run()
 	if err != nil {
 		return err
