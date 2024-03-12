@@ -8,6 +8,7 @@ import (
 // SetupFirewall sets up basic firewall rules and configures SSH within the container.
 func SetupFirewall() error {
 	// Check if iptables is installed
+	fmt.Println("Setup firewall func accessed")
 	if !isIptablesInstalled() {
 		fmt.Println("iptables is not installed. Attempting to install...")
 		err := installIptables()
