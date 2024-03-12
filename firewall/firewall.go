@@ -9,6 +9,7 @@ import (
 func SetupFirewall() error {
 	// Check if iptables is installed
 	fmt.Println("Setup firewall func accessed")
+	fmt.Println(isIptablesInstalled())
 	if !isIptablesInstalled() {
 		fmt.Println("iptables is not installed. Attempting to install...")
 		err := installIptables()
