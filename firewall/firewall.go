@@ -6,11 +6,11 @@ import (
 )
 
 // SetupFirewall sets up basic firewall rules and configures SSH within the container.
-func SetupFirewall(containerName string) error {
+func SetupFirewall() error {
 	// Check if iptables is installed
 	if !isIptablesInstalled() {
 		fmt.Println("iptables is not installed. Attempting to install...")
-		err := installIptables(containerName)
+		err := installIptables()
 		if err != nil {
 			return fmt.Errorf("error installing iptables: %v", err)
 		}
@@ -31,7 +31,7 @@ func SetupFirewall(containerName string) error {
 
 	// Apply each firewall rule
 	for _, rule := range rules {
-		err := exec.Command("docker", "exec", "-it", containerName, "bash", "-c", rule).Run()
+		err := exec.Command("bash", "-c", rule).Run()
 		if err != nil {
 			return fmt.Errorf("error applying firewall rule: %v", err)
 		}
@@ -40,7 +40,7 @@ func SetupFirewall(containerName string) error {
 	fmt.Println("Firewall rules configured successfully")
 
 	// Install and configure SSH within the container
-	err := installSSH(containerName)
+	err := installSSH()
 	if err != nil {
 		return fmt.Errorf("error installing and configuring SSH: %v", err)
 	}
@@ -55,8 +55,8 @@ func isIptablesInstalled() bool {
 }
 
 // installIptables installs iptables.
-func installIptables(containerName string) error {
-	cmd := exec.Command("docker", "exec", "-it", containerName, "sudo", "apt", "install", "-y", "iptables")
+func installIptables() error {
+	cmd := exec.Command("apt", "install", "-y", "iptables")
 	err := cmd.Run()
 	if err != nil {
 		return err
@@ -65,14 +65,14 @@ func installIptables(containerName string) error {
 }
 
 // installSSH installs and configures SSH within the container.
-func installSSH(containerName string) error {
+func installSSH() error {
 	// Install required packages inside the container
-	err := exec.Command("docker", "exec", "-it", containerName, "apt-get", "update").Run()
+	err := exec.Command("apt-get", "update").Run()
 	if err != nil {
 		return err
 	}
 
-	err = exec.Command("docker", "exec", "-it", containerName, "apt-get", "install", "-y", "sudo", "openssh-server").Run()
+	err = exec.Command("apt-get", "install", "-y", "sudo", "openssh-server").Run()
 	if err != nil {
 		return err
 	}
@@ -82,23 +82,23 @@ func installSSH(containerName string) error {
 	permitRootLogin := "no"
 	passwordAuthentication := "yes"
 
-	err = exec.Command("docker", "exec", "-it", containerName, "sed", "-i", "s/^Port .*/Port "+sshPort+"/", "/etc/ssh/sshd_config").Run()
+	err = exec.Command("sed", "-i", "s/^Port .*/Port "+sshPort+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
 		return err
 	}
 
-	err = exec.Command("docker", "exec", "-it", containerName, "sed", "-i", "s/^PermitRootLogin .*/PermitRootLogin "+permitRootLogin+"/", "/etc/ssh/sshd_config").Run()
+	err = exec.Command("sed", "-i", "s/^PermitRootLogin .*/PermitRootLogin "+permitRootLogin+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
 		return err
 	}
 
-	err = exec.Command("docker", "exec", "-it", containerName, "sed", "-i", "s/^PasswordAuthentication .*/PasswordAuthentication "+passwordAuthentication+"/", "/etc/ssh/sshd_config").Run()
+	err = exec.Command("sed", "-i", "s/^PasswordAuthentication .*/PasswordAuthentication "+passwordAuthentication+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
 		return err
 	}
 
 	// Start SSH service
-	err = exec.Command("docker", "exec", "-it", containerName, "sudo", "service", "ssh", "start").Run()
+	err = exec.Command("sudo", "service", "ssh", "start").Run()
 	if err != nil {
 		return err
 	}
