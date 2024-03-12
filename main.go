@@ -21,11 +21,13 @@ func main() {
 	// Access variables from the environment
 	welcomeMessage := os.Getenv("WELCOME_MESSAGE")
 
+	containerName := os.Getenv("CONTAINER_NAME")
+
 	fmt.Println(welcomeMessage)
 
-	firewall.Run()
-
 	proxy.Run()
+
+	firewall.SetupFirewall(containerName)
 
 	vpn.Run()
 
