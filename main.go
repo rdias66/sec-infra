@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sec-infra/firewall"
+	"sec-infra/proxy"
+	"sec-infra/vpn"
 
 	"github.com/joho/godotenv"
 )
@@ -18,6 +21,14 @@ func main() {
 	// Access variables from the environment
 	welcomeMessage := os.Getenv("WELCOME_MESSAGE")
 
+	containerName := os.Getenv("CONTAINER_NAME")
+
 	fmt.Println(welcomeMessage)
+
+	proxy.Run()
+
+	firewall.SetupFirewall(containerName)
+
+	vpn.Run()
 
 }
