@@ -7,85 +7,70 @@ import (
 
 // SetupFirewall sets up basic firewall rules and configures SSH within the container.
 func SetupFirewall() error {
-	// Check if iptables is installed
-	fmt.Println("Setup firewall func accessed")
+	fmt.Println("Setting up firewall...")
 
-	//Installs Iptables
-	fmt.Println("Installing Iptables...")
-	err := installIptables()
-	if err != nil {
-		return fmt.Errorf("error installing iptables: %v", err)
+	// Install iptables if not already installed
+	if err := installPackage("iptables"); err != nil {
+		return fmt.Errorf("failed to install iptables: %v", err)
 	}
 
-	//Installs Nftables
-	err = installNftables()
-	if err != nil {
-		return fmt.Errorf("error installing iptables: %v", err)
+	// Install nftables if not already installed
+	if err := installPackage("nftables"); err != nil {
+		return fmt.Errorf("failed to install nftables: %v", err)
 	}
 
-	// Define the network interface (replace "eth0" with your actual interface)
+	// Define the network interface
 	networkInterface := "eth0"
 
 	// Define firewall rules
 	rules := []string{
-		// Allow incoming SSH connections
-		fmt.Sprintf("sudo nft add rule ip filter input iifname %s tcp dport 22 ct state new,established accept", networkInterface),
-		// Allow incoming HTTP connections
-		fmt.Sprintf("sudo nft add rule ip filter input iifname %s tcp dport 80 ct state new,established accept", networkInterface),
-		// Drop all other incoming connections
+		"sudo nft add rule ip filter input iifname " + networkInterface + " tcp dport 22 ct state new,established accept",
+		"sudo nft add rule ip filter input iifname " + networkInterface + " tcp dport 80 ct state new,established accept",
 		"sudo nft add rule ip filter input drop",
 	}
 
 	// Apply each firewall rule
 	for _, rule := range rules {
-		// Print the rule before executing
-		fmt.Println("Executing rule:", rule)
-
-		// Execute the command
-		cmd := exec.Command("bash", "-c", rule)
-		err := cmd.Run()
-		if err != nil {
-			// Print the error if the command fails
-			fmt.Printf("Error executing rule '%s': %v\n", rule, err)
-			// Return an error if desired
-			return fmt.Errorf("error applying firewall rule: %v", err)
+		fmt.Println("Applying rule:", rule)
+		if err := runCommand(rule); err != nil {
+			return fmt.Errorf("failed to apply firewall rule '%s': %v", rule, err)
 		}
 	}
 
-	fmt.Println("Firewall rules configured successfully")
-
-	//Install and configure SSH within the container
-	error := installSSH()
-	if error != nil {
-		return fmt.Errorf("error installing and configuring SSH: %v", error)
+	// Install and configure SSH
+	if err := installSSH(); err != nil {
+		return fmt.Errorf("failed to install and configure SSH: %v", err)
 	}
 
+	fmt.Println("Firewall setup completed successfully.")
 	return nil
 }
 
-// install Iptables
-func installIptables() error {
-	fmt.Println("Install SSH func accessed")
-	cmd := exec.Command("apt-get", "install", "-y", "iptables")
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println(err)
+// installPackage installs a package using apt-get.
+func installPackage(pkg string) error {
+	fmt.Printf("Installing package %s...\n", pkg)
+	cmd := exec.Command("apt-get", "install", "-y", pkg)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	fmt.Printf("Package %s installed.\n", pkg)
+	return nil
+}
+
+// runCommand runs a command in the shell.
+func runCommand(command string) error {
+	cmd := exec.Command("bash", "-c", command)
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 	return nil
 }
 
-// installSSH installs and configures SSH within the container.
+// installSSH installs and configures SSH.
 func installSSH() error {
-	// Install required packages inside the container
-	fmt.Println("Install SSH func accessed")
-	err := exec.Command("apt-get", "update").Run()
-	if err != nil {
-		return err
-	}
-
-	err = exec.Command("apt-get", "install", "-y", "sudo", "openssh-server").Run()
-	if err != nil {
+	fmt.Println("Installing and configuring SSH...")
+	// Install SSH server
+	if err := installPackage("openssh-server"); err != nil {
 		return err
 	}
 
@@ -118,17 +103,13 @@ func installSSH() error {
 	fmt.Println("OpenSSH server has been installed and configured.")
 
 	return nil
-}
 
-// installNftables installs the nftables package.
-func installNftables() error {
-	fmt.Println("Installing nftables...")
-	cmd := exec.Command("apt-get", "install", "-y", "nftables")
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("failed to install nftables package: %v", err)
+	// Start SSH service
+	cmd := exec.Command("service", "ssh", "start")
+	if err := cmd.Run(); err != nil {
+		return err
 	}
 
-	fmt.Println("nftables installed successfully.")
+	fmt.Println("SSH installed and configured successfully.")
 	return nil
 }
