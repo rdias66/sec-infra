@@ -26,11 +26,11 @@ func SetupFirewall() error {
 	// Define firewall rules
 	rules := []string{
 		// Allow incoming SSH connections
-		fmt.Sprintf("iptables -A INPUT -i %s -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT", networkInterface),
+		fmt.Sprintf("nft add rule ip filter input iifname %s tcp dport 22 ct state new,established accept", networkInterface),
 		// Allow incoming HTTP connections
-		fmt.Sprintf("iptables -A INPUT -i %s -p tcp --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT", networkInterface),
+		fmt.Sprintf("nft add rule ip filter input iifname %s tcp dport 80 ct state new,established accept", networkInterface),
 		// Drop all other incoming connections
-		"iptables -A INPUT -j DROP",
+		"nft add rule ip filter input drop",
 	}
 
 	// Apply each firewall rule
@@ -51,7 +51,7 @@ func SetupFirewall() error {
 
 	fmt.Println("Firewall rules configured successfully")
 
-	// Install and configure SSH within the container
+	//Install and configure SSH within the container
 	err := installSSH()
 	if err != nil {
 		return fmt.Errorf("error installing and configuring SSH: %v", err)
