@@ -59,9 +59,9 @@ func SetupFirewall() error {
 	fmt.Println("Firewall rules configured successfully")
 
 	//Install and configure SSH within the container
-	err := installSSH()
-	if err != nil {
-		return fmt.Errorf("error installing and configuring SSH: %v", err)
+	error := installSSH()
+	if error != nil {
+		return fmt.Errorf("error installing and configuring SSH: %v", error)
 	}
 
 	return nil
