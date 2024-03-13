@@ -29,11 +29,11 @@ func SetupFirewall() error {
 	// Define firewall rules
 	rules := []string{
 		// Allow incoming SSH connections
-		fmt.Sprintf("nft add rule ip filter input iifname %s tcp dport 22 ct state new,established accept", networkInterface),
+		fmt.Sprintf("sudo nft add rule ip filter input iifname %s tcp dport 22 ct state new,established accept", networkInterface),
 		// Allow incoming HTTP connections
-		fmt.Sprintf("nft add rule ip filter input iifname %s tcp dport 80 ct state new,established accept", networkInterface),
+		fmt.Sprintf("sudo nft add rule ip filter input iifname %s tcp dport 80 ct state new,established accept", networkInterface),
 		// Drop all other incoming connections
-		"nft add rule ip filter input drop",
+		"sudo nft add rule ip filter input drop",
 	}
 
 	// Apply each firewall rule
