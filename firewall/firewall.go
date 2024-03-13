@@ -9,22 +9,25 @@ import (
 func SetupFirewall() error {
 	// Check if iptables is installed
 	fmt.Println("Setup firewall func accessed")
-	if !isIptablesInstalled() {
-		fmt.Println("iptables is not installed. Attempting to install...")
-		err := installIptables()
-		if err != nil {
-			return fmt.Errorf("error installing iptables: %v", err)
-		}
+
+	//Installs Iptables
+	fmt.Println("Installing Iptables...")
+	err := installIptables()
+	if err != nil {
+		return fmt.Errorf("error installing iptables: %v", err)
 	}
-	if isIptablesInstalled() {
-		fmt.Println("Iptables is already installed.")
+
+	//Installs Nftables
+	err = installNftables()
+	if err != nil {
+		return fmt.Errorf("error installing iptables: %v", err)
 	}
 
 	// Define the network interface (replace "eth0" with your actual interface)
 	networkInterface := "eth0"
 
 	//Add nf_tables command line binary path so the commands can work
-	err := exec.Command("/usr/sbin/nft", "add", "rule", "ip", "filter", "input", "iifname", "eth0", "tcp", "dport", "22", "ct", "state", "new,established", "accept").Run()
+	err = exec.Command("/usr/sbin/nft", "add", "rule", "ip", "filter", "input", "iifname", "eth0", "tcp", "dport", "22", "ct", "state", "new,established", "accept").Run()
 	if err != nil {
 		// Print the error if the command fails
 		fmt.Printf("Error %v while trying to add nf_tables binary to path", err)
@@ -67,13 +70,7 @@ func SetupFirewall() error {
 	return nil
 }
 
-// isIptablesInstalled checks if iptables is installed.
-func isIptablesInstalled() bool {
-	_, err := exec.LookPath("iptables")
-	return err == nil
-}
-
-// installIptables installs iptables.
+// install Iptables
 func installIptables() error {
 	fmt.Println("Install SSH func accessed")
 	cmd := exec.Command("apt-get", "install", "-y", "iptables")
@@ -127,5 +124,18 @@ func installSSH() error {
 
 	fmt.Println("OpenSSH server has been installed and configured.")
 
+	return nil
+}
+
+// installNftables installs the nftables package.
+func installNftables() error {
+	fmt.Println("Installing nftables...")
+	cmd := exec.Command("apt-get", "install", "-y", "nftables")
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to install nftables package: %v", err)
+	}
+
+	fmt.Println("nftables installed successfully.")
 	return nil
 }
