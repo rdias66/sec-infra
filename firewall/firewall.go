@@ -11,12 +11,12 @@ func SetupFirewall() error {
 
 	// Install iptables if not already installed
 	if err := installPackage("iptables"); err != nil {
-		return fmt.Errorf("failed to install iptables: %v", err)
+		fmt.Println("failed to install iptables: ", err)
 	}
 
 	// Install nftables if not already installed
 	if err := installPackage("nftables"); err != nil {
-		return fmt.Errorf("failed to install nftables: %v", err)
+		fmt.Println("failed to install nftables: %v", err)
 	}
 
 	// Define the network interface
@@ -33,13 +33,13 @@ func SetupFirewall() error {
 	for _, rule := range rules {
 		fmt.Println("Applying rule:", rule)
 		if err := runCommand(rule); err != nil {
-			return fmt.Errorf("failed to apply firewall rule '%s': %v", rule, err)
+			fmt.Println("failed to apply firewall rule ", rule, err)
 		}
 	}
 
 	// Install and configure SSH
 	if err := installSSH(); err != nil {
-		return fmt.Errorf("failed to install and configure SSH: %v", err)
+		fmt.Println("failed to install and configure SSH: ", err)
 	}
 
 	fmt.Println("Firewall setup completed successfully.")
@@ -51,7 +51,7 @@ func installPackage(pkg string) error {
 	fmt.Printf("Installing package %s...\n", pkg)
 	cmd := exec.Command("apt-get", "install", "-y", pkg)
 	if err := cmd.Run(); err != nil {
-		return err
+		fmt.Println(err)
 	}
 	fmt.Printf("Package %s installed.\n", pkg)
 	return nil
@@ -61,7 +61,7 @@ func installPackage(pkg string) error {
 func runCommand(command string) error {
 	cmd := exec.Command("bash", "-c", command)
 	if err := cmd.Run(); err != nil {
-		return err
+		fmt.Println(err)
 	}
 	return nil
 }
@@ -71,7 +71,7 @@ func installSSH() error {
 	fmt.Println("Installing and configuring SSH...")
 	// Install SSH server
 	if err := installPackage("openssh-server"); err != nil {
-		return err
+		fmt.Println(err)
 	}
 
 	// Set SSH configuration
@@ -79,37 +79,26 @@ func installSSH() error {
 	permitRootLogin := "no"
 	passwordAuthentication := "yes"
 
-	err = exec.Command("sed", "-i", "s/^Port .*/Port "+sshPort+"/", "/etc/ssh/sshd_config").Run()
+	err := exec.Command("sed", "-i", "s/^Port .*/Port "+sshPort+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 
 	err = exec.Command("sed", "-i", "s/^PermitRootLogin .*/PermitRootLogin "+permitRootLogin+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 
 	err = exec.Command("sed", "-i", "s/^PasswordAuthentication .*/PasswordAuthentication "+passwordAuthentication+"/", "/etc/ssh/sshd_config").Run()
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 
 	// Start SSH service
-	err = exec.Command("sudo", "service", "ssh", "start").Run()
-	if err != nil {
-		return err
+	if err := exec.Command("sudo", "service", "ssh", "start").Run(); err != nil {
+		fmt.Println(err)
 	}
 
 	fmt.Println("OpenSSH server has been installed and configured.")
-
-	return nil
-
-	// Start SSH service
-	cmd := exec.Command("service", "ssh", "start")
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-
-	fmt.Println("SSH installed and configured successfully.")
 	return nil
 }
