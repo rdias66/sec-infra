@@ -9,7 +9,6 @@ import (
 func SetupFirewall() error {
 	// Check if iptables is installed
 	fmt.Println("Setup firewall func accessed")
-	fmt.Println(isIptablesInstalled())
 	if !isIptablesInstalled() {
 		fmt.Println("iptables is not installed. Attempting to install...")
 		err := installIptables()
@@ -26,6 +25,8 @@ func SetupFirewall() error {
 
 	// Define firewall rules
 	rules := []string{
+		// Check version
+		"sudo iptables",
 		// Allow incoming SSH connections
 		fmt.Sprintf("iptables -A INPUT -i %s -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT", networkInterface),
 		// Allow incoming HTTP connections
@@ -36,9 +37,16 @@ func SetupFirewall() error {
 
 	// Apply each firewall rule
 	for _, rule := range rules {
-		fmt.Println(rule)
-		err := exec.Command("bash", "-c", rule).Run()
+		// Print the rule before executing
+		fmt.Println("Executing rule:", rule)
+
+		// Execute the command
+		cmd := exec.Command("bash", "-c", rule)
+		err := cmd.Run()
 		if err != nil {
+			// Print the error if the command fails
+			fmt.Printf("Error executing rule '%s': %v\n", rule, err)
+			// Return an error if desired
 			return fmt.Errorf("error applying firewall rule: %v", err)
 		}
 	}
