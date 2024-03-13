@@ -26,7 +26,7 @@ func SetupFirewall() error {
 	// Define firewall rules
 	rules := []string{
 		// Check version
-		"sudo iptables",
+		"iptables",
 		// Allow incoming SSH connections
 		fmt.Sprintf("iptables -A INPUT -i %s -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT", networkInterface),
 		// Allow incoming HTTP connections
