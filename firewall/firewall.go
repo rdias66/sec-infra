@@ -17,6 +17,9 @@ func SetupFirewall() error {
 			return fmt.Errorf("error installing iptables: %v", err)
 		}
 	}
+	if isIptablesInstalled() {
+		fmt.Println("Iptables is already installed.")
+	}
 
 	// Define the network interface (replace "eth0" with your actual interface)
 	networkInterface := "eth0"
@@ -33,6 +36,7 @@ func SetupFirewall() error {
 
 	// Apply each firewall rule
 	for _, rule := range rules {
+		fmt.Println(rule)
 		err := exec.Command("bash", "-c", rule).Run()
 		if err != nil {
 			return fmt.Errorf("error applying firewall rule: %v", err)
