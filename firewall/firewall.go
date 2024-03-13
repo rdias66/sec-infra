@@ -23,6 +23,13 @@ func SetupFirewall() error {
 	// Define the network interface (replace "eth0" with your actual interface)
 	networkInterface := "eth0"
 
+	//Add nf_tables command line binary path so the commands can work
+	err := exec.Command("/usr/sbin/nft", "add", "rule", "ip", "filter", "input", "iifname", "eth0", "tcp", "dport", "22", "ct", "state", "new,established", "accept").Run()
+	if err != nil {
+		// Print the error if the command fails
+		fmt.Printf("Error %v while trying to add nf_tables binary to path", err)
+	}
+
 	// Define firewall rules
 	rules := []string{
 		// Allow incoming SSH connections
