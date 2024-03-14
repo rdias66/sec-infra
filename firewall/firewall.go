@@ -39,7 +39,10 @@ func SetupFirewall() error {
 
 	// Install and configure SSH
 	if err := installSSH(); err != nil {
-		fmt.Println("failed to install and configure SSH: ", err)
+		fmt.Println("failed to install SSH: ", err)
+	}
+	if err := configSSH(); err != nil {
+		fmt.Println("failed to configure SSH: ", err)
 	}
 
 	fmt.Println("Firewall setup completed successfully.")
@@ -66,14 +69,19 @@ func runCommand(command string) error {
 	return nil
 }
 
-// installSSH installs and configures SSH.
+// installs SSH.
 func installSSH() error {
-	fmt.Println("Installing and configuring SSH...")
+	fmt.Println("Attempting to install SSH...")
 	// Install SSH server
 	if err := installPackage("openssh-server"); err != nil {
 		fmt.Println(err)
 	}
+	return nil
+}
 
+// configures SSH
+func configSSH() error {
+	fmt.Println("Attemption to configure SSH...")
 	// Set SSH configuration
 	sshPort := "22"
 	permitRootLogin := "no"
