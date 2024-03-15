@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-// SetupFirewall sets up basic firewall rules and configures SSH within the container.
+// Sets up basic firewall rules and configures SSH within the container.
 func SetupFirewall() error {
 	fmt.Println("Setting up firewall...")
 
@@ -49,7 +49,7 @@ func SetupFirewall() error {
 	return nil
 }
 
-// installPackage installs a package using apt-get.
+// installs a package using apt-get.
 func installPackage(pkg string) error {
 	fmt.Printf("Installing package %s...\n", pkg)
 	cmd := exec.Command("apt-get", "install", "-y", pkg)
@@ -60,7 +60,7 @@ func installPackage(pkg string) error {
 	return nil
 }
 
-// runCommand runs a command in the shell.
+// runs a command in the shell.
 func runCommand(command string) error {
 	cmd := exec.Command("bash", "-c", command)
 	if err := cmd.Run(); err != nil {
