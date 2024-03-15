@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func Run() {
+func VPNAccessed() {
 	//content tbd, archtecture might change
-	fmt.Println("VPN package accessed")
+	fmt.Println("VPN package has been accessed!")
 }

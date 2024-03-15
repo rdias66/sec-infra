@@ -22,10 +22,10 @@ func main() {
 	welcomeMessage := os.Getenv("WELCOME_MESSAGE")
 	fmt.Println(welcomeMessage)
 
-	proxy.Run()
+	proxy.ProxyAccessed()
 
-	firewall.SetupFirewall()
+	firewall.FirewallAccessed()
 
-	vpn.Run()
+	vpn.VPNAccessed()
 
 }

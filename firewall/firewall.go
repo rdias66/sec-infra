@@ -5,6 +5,10 @@ import (
 	"os/exec"
 )
 
+func FirewallAccessed() {
+	fmt.Println("Firewall package has been accessed!")
+}
+
 // Sets up basic firewall rules and configures SSH within the container.
 func SetupFirewall() error {
 	fmt.Println("Setting up firewall...")
@@ -13,12 +17,6 @@ func SetupFirewall() error {
 	if err := installPackage("iptables"); err != nil {
 		fmt.Println("failed to install iptables: ", err)
 	}
-
-	// Install nftables if not already installed
-	if err := installPackage("nftables"); err != nil {
-		fmt.Println("failed to install nftables: %v", err)
-	}
-
 	// Define the network interface
 	networkInterface := "eth0"
 

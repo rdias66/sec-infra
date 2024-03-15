@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func Run() {
+func ProxyAccessed() {
 	//content tbd, archtecture might change
-	fmt.Println("Proxy package accessed")
+	fmt.Println("Proxy package has been accessed!")
 }
