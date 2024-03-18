@@ -14,6 +14,8 @@ func main() {
 
 	proxy.SetupSquidProxy()
 
+	proxy.AddUserToSquidConfig("rdias66", "dev")
+
 	firewall.FirewallAccessed()
 
 	vpn.VPNAccessed()
