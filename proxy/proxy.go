@@ -93,8 +93,8 @@ func AddBlockedSite(url string) error {
 		return err
 	}
 
-	fmt.Println("Attempting to restart squid... ")
-	cmd := exec.Command("systemctl", "restart", "squid")
+	// restart Squid using shell command
+	cmd := exec.Command("/etc/init.d/squid", "restart")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to restart squid: ", err)
 		return err
