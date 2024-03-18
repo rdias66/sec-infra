@@ -52,7 +52,7 @@ func SetupFirewall() error {
 func installSSH() error {
 	fmt.Println("Attempting to install SSH...")
 	// Install SSH server
-	if err := installPackage("openssh-server"); err != nil {
+	if err := utils.InstallPackage("openssh-server"); err != nil {
 		fmt.Println(err)
 	}
 	return nil
