@@ -7,32 +7,33 @@ import (
 	"sec-infra/utils"
 )
 
-// SquidConfig represents Squid proxy server configuration parameters
-type SquidConfig struct {
-	BlockedSites  []string
-	Authenticated bool
-	Username      string
-	Password      string
-}
-
+// SetupSquidProxy sets up the Squid proxy server
 func SetupSquidProxy() error {
 	fmt.Println("Setting up proxy server with Squid...")
 
-	//Install squid if not installed yet
+	// Install squid if not installed yet
 	if err := utils.InstallPackage("squid"); err != nil {
 		fmt.Println("failed to install squid: ", err)
+		return err
 	}
 
 	if err := generateSquidConfig(); err != nil {
-		fmt.Println("failed to generate Squid config: ", err)
+		return err
 	}
+
 	return nil
 }
 
-// GenerateSquidConfig generates Squid configuration based on the provided parameters
+// GenerateSquidConfig generates Squid configuration
 func generateSquidConfig() error {
+	fmt.Println("Checking if  Squid configuration file is done...")
+	if _, err := os.Stat("/etc/squid/squid.conf"); err == nil {
+		fmt.Println("Squid configuration file already exists. Skipping generation.")
+		return nil
+	}
+
 	fmt.Println("Opening Squid configuration file...")
-	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY, 0644)
+	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("failed to open squid.conf file: ", err)
 		return err
@@ -74,6 +75,7 @@ func AddUserToSquidConfig(username, password string) error {
 	return nil
 }
 
+// AddBlockedSite adds a site to the list of blocked sites in Squid configuration
 func AddBlockedSite(url string) error {
 	fmt.Println("Opening Squid configuration file...")
 	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY, 0644)
@@ -96,7 +98,7 @@ func AddBlockedSite(url string) error {
 		return err
 	}
 
-	fmt.Println("Attempting to restard squid... ")
+	fmt.Println("Attempting to restart squid... ")
 	cmd := exec.Command("systemctl", "restart", "squid")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to restart squid: ", err)
