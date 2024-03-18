@@ -52,8 +52,9 @@ http_access allow authenticated_users
 		fmt.Println("failed to write basic configuration in squid config file: ", err)
 		return err
 	}
-	fmt.Println("Restarting Squid...")
-	cmd := exec.Command("systemctl", "restart", "squid")
+
+	// restart Squid using shell command
+	cmd := exec.Command("/etc/init.d/squid", "restart")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to restart squid: ", err)
 		return err
