@@ -17,6 +17,12 @@ func SetupSquidProxy() error {
 		return err
 	}
 
+	// Install apache2 utils if not installed yet for proxy users pass storage
+	if err := utils.InstallPackage("apache2-utils"); err != nil {
+		fmt.Println("failed to install apache2-utils: ", err)
+		return err
+	}
+
 	if err := generateSquidConfig(); err != nil {
 		return err
 	}
