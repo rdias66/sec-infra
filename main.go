@@ -14,7 +14,7 @@ func main() {
 
 	proxy.SetupSquidProxy()
 
-	proxy.AddUserToSquidConfig("rdias66", "dev")
+	proxy.AddBlockedSite("https://www.instagram.com")
 
 	firewall.FirewallAccessed()
 

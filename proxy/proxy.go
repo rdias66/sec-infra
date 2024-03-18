@@ -70,17 +70,6 @@ http_access allow authenticated_users
 	return nil
 }
 
-// AddUserToSquidConfig adds a user to Squid authentication configuration
-func AddUserToSquidConfig(username, password string) error {
-	fmt.Println("Attempting to add user:", username, " to proxy server...")
-	cmd := exec.Command("/usr/bin/htpasswd", "-b", "-c", "/etc/squid/passwd", username, password)
-	if err := cmd.Run(); err != nil {
-		fmt.Println("failed to add new user to proxy server: ", err)
-		return err
-	}
-	return nil
-}
-
 // AddBlockedSite adds a site to the list of blocked sites in Squid configuration
 func AddBlockedSite(url string) error {
 	fmt.Println("Opening Squid configuration file...")
