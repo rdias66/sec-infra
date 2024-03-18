@@ -67,7 +67,7 @@ http_access allow authenticated_users
 // AddUserToSquidConfig adds a user to Squid authentication configuration
 func AddUserToSquidConfig(username, password string) error {
 	fmt.Println("Attempting to add user:", username, " to proxy server...")
-	cmd := exec.Command("htpasswd", "-b", "-c", "/etc/squid/passwd", username, password)
+	cmd := exec.Command("/usr/bin/htpasswd", "-b", "-c", "/etc/squid/passwd", username, password)
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to add new user to proxy server: ", err)
 		return err
