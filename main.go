@@ -12,11 +12,9 @@ func main() {
 	welcomeMessage := "Welcome to the sec-infra Golang CLI, this is an app developed to optimize and facilitate the security infrastructure of a Linux Server."
 	fmt.Println(welcomeMessage)
 
-	proxy.ProxyAccessed()
+	proxy.SetupSquidProxy()
 
 	firewall.FirewallAccessed()
-
-	//	firewall.SetupFirewall()
 
 	vpn.VPNAccessed()
 

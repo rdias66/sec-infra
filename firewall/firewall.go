@@ -3,6 +3,7 @@ package firewall
 import (
 	"fmt"
 	"os/exec"
+	"sec-infra/utils"
 )
 
 func FirewallAccessed() {
@@ -14,7 +15,7 @@ func SetupFirewall() error {
 	fmt.Println("Setting up firewall...")
 
 	// Install iptables if not already installed
-	if err := installPackage("iptables"); err != nil {
+	if err := utils.InstallPackage("iptables"); err != nil {
 		fmt.Println("failed to install iptables: ", err)
 	}
 	// Define the network interface
@@ -30,7 +31,7 @@ func SetupFirewall() error {
 	// Apply each firewall rule
 	for _, rule := range rules {
 		fmt.Println("Applying rule:", rule)
-		if err := runCommand(rule); err != nil {
+		if err := utils.RunCommand(rule); err != nil {
 			fmt.Println("failed to apply firewall rule ", rule, err)
 		}
 	}
@@ -44,26 +45,6 @@ func SetupFirewall() error {
 	}
 
 	fmt.Println("Firewall setup completed successfully.")
-	return nil
-}
-
-// installs a package using apt-get.
-func installPackage(pkg string) error {
-	fmt.Printf("Installing package %s...\n", pkg)
-	cmd := exec.Command("apt-get", "install", "-y", pkg)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Printf("Package %s installed.\n", pkg)
-	return nil
-}
-
-// runs a command in the shell.
-func runCommand(command string) error {
-	cmd := exec.Command("bash", "-c", command)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-	}
 	return nil
 }
 
