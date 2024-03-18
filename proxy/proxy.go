@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"sec-infra/utils"
+	"strings"
 )
 
 // SetupSquidProxy sets up the Squid proxy server
@@ -70,8 +71,10 @@ http_access allow authenticated_users
 	return nil
 }
 
-// AddBlockedSite adds a site to the list of blocked sites in Squid configuration
 func AddBlockedSite(url string) error {
+	// Sanitize URL to remove special characters
+	sanitizedURL := strings.ReplaceAll(url, "/", "_")
+
 	fmt.Println("Opening Squid configuration file...")
 	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
@@ -82,12 +85,12 @@ func AddBlockedSite(url string) error {
 
 	fmt.Println("Attempting to write access control list for the url: ", url)
 
-	_, err = configFile.WriteString(fmt.Sprintf("\nacl block_%s dstdomain %s\n", url, url))
+	_, err = configFile.WriteString(fmt.Sprintf("\nacl block_%s dstdomain %s\n", sanitizedURL, url))
 	if err != nil {
 		fmt.Println("failed while blocking dstdomain: ", err)
 		return err
 	}
-	_, err = configFile.WriteString(fmt.Sprintf("http_access deny block_%s\n", url))
+	_, err = configFile.WriteString(fmt.Sprintf("http_access deny block_%s\n", sanitizedURL))
 	if err != nil {
 		fmt.Println("failed while blocking http access: ", err)
 		return err
