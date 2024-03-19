@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"sec-infra/utils"
@@ -78,7 +79,10 @@ func restartSquid() error {
 // AddBlockedSite adds a site to the list of blocked sites in Squid configuration
 func AddBlockedSite(url string) error {
 	// Sanitize URL to remove special characters
-	sanitizedURL := strings.ReplaceAll(url, "/", "_")
+	sanitizedURL, err := sanitizeURL(url)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 
 	fmt.Println("Opening Squid configuration file...")
 	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY, 0644)
@@ -108,4 +112,22 @@ func AddBlockedSite(url string) error {
 	}
 
 	return nil
+}
+
+func sanitizeURL(rawURL string) (string, error) {
+	// Parse the raw URL
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return "", err
+	}
+
+	// Get the sanitized URL components
+	sanitizedScheme := strings.ToLower(parsedURL.Scheme)
+	sanitizedHost := strings.ToLower(parsedURL.Host)
+	sanitizedPath := parsedURL.Path
+
+	// Reconstruct the sanitized URL
+	sanitizedURL := sanitizedScheme + "://" + sanitizedHost + sanitizedPath
+
+	return sanitizedURL, nil
 }
