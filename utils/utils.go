@@ -7,7 +7,7 @@ import (
 
 func InstallPackage(pkg string) error {
 	fmt.Printf("Attempting to install package %s...\n", pkg)
-	cmd := exec.Command("apt-get", "install", "-y", pkg)
+	cmd := exec.Command("sudo", "apt-get", "install", "-y", pkg)
 	if err := cmd.Run(); err != nil {
 		fmt.Println(err)
 	}
