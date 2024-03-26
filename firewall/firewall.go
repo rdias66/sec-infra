@@ -56,3 +56,16 @@ func ZeroCounters() error {
 	
 	return nil
 }
+
+func DefineInitialPolicies() error {
+	fmt.Println("Define package trafic policies...")
+	initialPolicies := []string {
+		"iptables -P OUTPUT ACCEPT",
+		"iptables -P INPUT DROP",
+		"iptables -P FORWARD DROP",
+	}
+	for _,initialPolicie := range initialPolicies {
+		util.RunCommand(initialPolicie)
+	}
+	return nil
+}
