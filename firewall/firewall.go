@@ -6,86 +6,53 @@ import (
 	"sec-infra/utils"
 )
 
-func FirewallAccessed() {
-	fmt.Println("Firewall package has been accessed!")
-}
+func InfraStarter() error {
+	fmt.Println("Setting up firewall infrastructure...")
+	utils.InstallPackage("iptables")
+	utils.InstallPackage("kmod")
 
-// Sets up basic firewall rules and configures SSH within the container.
-func SetupFirewall() error {
-	fmt.Println("Setting up firewall...")
-
-	// Install iptables if not already installed
-	if err := utils.InstallPackage("iptables"); err != nil {
-		fmt.Println("failed to install iptables: ", err)
+	mods := []string{
+		"modprobe iptables_nat",
+		"modprobe iptables_mangle",
+		"modprobe iptables_filter",
 	}
-	// Define the network interface
-	networkInterface := "eth0"
-
-	// Define firewall rules
-	rules := []string{
-		"sudo nft add rule ip filter input iifname " + networkInterface + " tcp dport 22 ct state new,established accept",
-		"sudo nft add rule ip filter input iifname " + networkInterface + " tcp dport 80 ct state new,established accept",
-		"sudo nft add rule ip filter input drop",
+	for _, mod := range mods {
+		fmt.Println("Installing adtional module for :", mod[8:])
+		utils.RunCommand(mod)
 	}
 
-	// Apply each firewall rule
-	for _, rule := range rules {
-		fmt.Println("Applying rule:", rule)
-		if err := utils.RunCommand(rule); err != nil {
-			fmt.Println("failed to apply firewall rule ", rule, err)
-		}
-	}
+	enableIpForward := "echo 1 > /proc/sys/net/ipv4/ip_forward"
+	utils.RunCommand(enableIpForward)
 
-	// Install and configure SSH
-	if err := installSSH(); err != nil {
-		fmt.Println("failed to install SSH: ", err)
-	}
-	if err := configSSH(); err != nil {
-		fmt.Println("failed to configure SSH: ", err)
-	}
-
-	fmt.Println("Firewall setup completed successfully.")
 	return nil
 }
 
-// installs SSH.
-func installSSH() error {
-	fmt.Println("Attempting to install SSH...")
-	// Install SSH server
-	if err := utils.InstallPackage("openssh-server"); err != nil {
-		fmt.Println(err)
+func ClearRules() error {
+	fmt.Println("Cleaning previous rule chain tables...")
+
+	 clearCommands:= []string {
+		"iptables -t nat -F",
+		"iptables -t mangle -F",
+		"iptables -t filter -F",
+		"iptables -X",
+	}
+
+	for _,clearCommand := range clearCommands {
+		utils.RunCommand(clearCommand)		
 	}
 	return nil
 }
 
-// configures SSH
-func configSSH() error {
-	fmt.Println("Attemption to configure SSH...")
-	// Set SSH configuration
-	sshPort := "22"
-	permitRootLogin := "no"
-	passwordAuthentication := "yes"
-
-	err := exec.Command("sed", "-i", "s/^Port .*/Port "+sshPort+"/", "/etc/ssh/sshd_config").Run()
-	if err != nil {
-		fmt.Println(err)
+func ZeroCounters() error {
+	fmt.Println("Zeroing rule counters...")
+	zeroCommands := []string {
+		"iptables -t nat -Z",
+		"iptables -t mangle -Z",
+		"iptables -t filter -Z",
 	}
-
-	err = exec.Command("sed", "-i", "s/^PermitRootLogin .*/PermitRootLogin "+permitRootLogin+"/", "/etc/ssh/sshd_config").Run()
-	if err != nil {
-		fmt.Println(err)
+	for _,zeroCommand := range zeroCommands {
+		util.RunCommand(zeroCommand)
 	}
-
-	err = exec.Command("sed", "-i", "s/^PasswordAuthentication .*/PasswordAuthentication "+passwordAuthentication+"/", "/etc/ssh/sshd_config").Run()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	// Start SSH service
-	if err := exec.Command("sudo", "service", "ssh", "start").Run(); err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("OpenSSH server has been installed and configured.")
+	
 	return nil
 }

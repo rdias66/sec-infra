@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sec-infra/firewall"
 	"sec-infra/proxy"
-	"sec-infra/vpn"
+	"sec-infra/ssh"
 )
 
 func main() {
@@ -15,9 +15,5 @@ func main() {
 	proxy.SetupSquidProxy()
 
 	proxy.AddBlockedSite("https://www.instagram.com")
-
-	firewall.FirewallAccessed()
-
-	vpn.VPNAccessed()
 
 }
