@@ -12,13 +12,12 @@ import (
 func SetupSquidProxy() error {
 	fmt.Println("Setting up proxy server with Squid...")
 
-	
 	if err := utils.InstallPackage("squid"); err != nil {
 		fmt.Println("Failed to install Squid: ", err)
 		return err
 	}
 
-	
+
 	if err := utils.InstallPackage("apache2-utils"); err != nil {
 		fmt.Println("Failed to install apache2-utils: ", err)
 		return err
@@ -28,7 +27,6 @@ func SetupSquidProxy() error {
 	if err := generateSquidConfig(); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -64,7 +62,6 @@ http_access allow authenticated_users
 	return nil
 }
 
-
 func restartSquid() error {
 	fmt.Println("Restarting Squid service...")
 	cmd := exec.Command("/etc/init.d/squid", "restart")
@@ -74,7 +71,6 @@ func restartSquid() error {
 	}
 	return nil
 }
-
 
 func AddBlockedSite(url string) error {
 	
