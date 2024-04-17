@@ -43,7 +43,7 @@ func ClearRules() error {
 	return nil
 }
 
-func ZeroCounters() error {
+func CleanCounters() error {
 	fmt.Println("Zeroing rule counters...")
 	zeroCommands := []string {
 		"iptables -t nat -Z",
