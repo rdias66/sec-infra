@@ -76,9 +76,8 @@ func restartSquid() error {
 	return nil
 }
 
-// AddBlockedSite adds a site to the list of blocked sites in Squid configuration
 func AddBlockedSite(url string) error {
-	// Sanitize URL to remove special characters
+
 	sanitizedURL, err := sanitizeURL(url)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -94,7 +93,7 @@ func AddBlockedSite(url string) error {
 
 	fmt.Println("Attempting to block access to the URL: ", url)
 
-	// Write ACL for the blocked URL
+
 	_, err = configFile.WriteString(fmt.Sprintf("\nacl block_%s dstdomain %s\n", sanitizedURL, url))
 	if err != nil {
 		fmt.Println("Failed while blocking dstdomain: ", err)
@@ -106,7 +105,7 @@ func AddBlockedSite(url string) error {
 		return err
 	}
 
-	// Restart Squid
+
 	if err := restartSquid(); err != nil {
 		return err
 	}
@@ -115,18 +114,16 @@ func AddBlockedSite(url string) error {
 }
 
 func sanitizeURL(rawURL string) (string, error) {
-	// Parse the raw URL
+
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
 		return "", err
 	}
 
-	// Get the sanitized URL components
 	sanitizedScheme := strings.ToLower(parsedURL.Scheme)
 	sanitizedHost := strings.ToLower(parsedURL.Host)
 	sanitizedPath := parsedURL.Path
 
-	// Reconstruct the sanitized URL
 	sanitizedURL := sanitizedScheme + "://" + sanitizedHost + sanitizedPath
 
 	return sanitizedURL, nil
