@@ -9,31 +9,28 @@ import (
 	"strings"
 )
 
-// SetupSquidProxy sets up the Squid proxy server
 func SetupSquidProxy() error {
 	fmt.Println("Setting up proxy server with Squid...")
 
-	// Install Squid if not already installed
 	if err := utils.InstallPackage("squid"); err != nil {
 		fmt.Println("Failed to install Squid: ", err)
 		return err
 	}
 
-	// Install apache2-utils if not already installed (used for proxy user password storage)
+
 	if err := utils.InstallPackage("apache2-utils"); err != nil {
 		fmt.Println("Failed to install apache2-utils: ", err)
 		return err
 	}
 
-	// Generate Squid configuration
+	
 	if err := generateSquidConfig(); err != nil {
 		return err
 	}
-
 	return nil
 }
 
-// generateSquidConfig generates Squid configuration
+
 func generateSquidConfig() error {
 	fmt.Println("Opening Squid configuration file...")
 	configFile, err := os.OpenFile("/etc/squid/squid.conf", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
@@ -57,7 +54,7 @@ http_access allow authenticated_users
 		return err
 	}
 
-	// Restart Squid
+	
 	if err := restartSquid(); err != nil {
 		return err
 	}
@@ -65,7 +62,6 @@ http_access allow authenticated_users
 	return nil
 }
 
-// restartSquid restarts the Squid service
 func restartSquid() error {
 	fmt.Println("Restarting Squid service...")
 	cmd := exec.Command("/etc/init.d/squid", "restart")
@@ -77,7 +73,11 @@ func restartSquid() error {
 }
 
 func AddBlockedSite(url string) error {
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	sanitizedURL, err := sanitizeURL(url)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -93,7 +93,11 @@ func AddBlockedSite(url string) error {
 
 	fmt.Println("Attempting to block access to the URL: ", url)
 
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	_, err = configFile.WriteString(fmt.Sprintf("\nacl block_%s dstdomain %s\n", sanitizedURL, url))
 	if err != nil {
 		fmt.Println("Failed while blocking dstdomain: ", err)
@@ -105,7 +109,11 @@ func AddBlockedSite(url string) error {
 		return err
 	}
 
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	if err := restartSquid(); err != nil {
 		return err
 	}
@@ -114,16 +122,28 @@ func AddBlockedSite(url string) error {
 }
 
 func sanitizeURL(rawURL string) (string, error) {
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
 		return "", err
 	}
 
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	sanitizedScheme := strings.ToLower(parsedURL.Scheme)
 	sanitizedHost := strings.ToLower(parsedURL.Host)
 	sanitizedPath := parsedURL.Path
 
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 3c020d2653c45b801cc745fa953f38f804629be4
 	sanitizedURL := sanitizedScheme + "://" + sanitizedHost + sanitizedPath
 
 	return sanitizedURL, nil

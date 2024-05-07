@@ -43,7 +43,7 @@ func ClearRules() error {
 	return nil
 }
 
-func ZeroCounters() error {
+func CleanCounters() error {
 	fmt.Println("Zeroing rule counters...")
 	zeroCommands := []string {
 		"iptables -t nat -Z",
@@ -51,7 +51,7 @@ func ZeroCounters() error {
 		"iptables -t filter -Z",
 	}
 	for _,zeroCommand := range zeroCommands {
-		util.RunCommand(zeroCommand)
+		utils.RunCommand(zeroCommand)
 	}
 	
 	return nil
@@ -65,7 +65,7 @@ func DefineInitialPolicies() error {
 		"iptables -P FORWARD DROP",
 	}
 	for _,initialPolicie := range initialPolicies {
-		util.RunCommand(initialPolicie)
+		utils.RunCommand(initialPolicie)
 	}
 	return nil
 }
